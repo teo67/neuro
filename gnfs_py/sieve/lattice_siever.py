@@ -6,6 +6,8 @@ from collections.abc import Iterable
 import utils
 
 class LatticeSiever:
+    b_0: int
+    b_1: int
     B: float
     I: int
     J: int
@@ -36,7 +38,9 @@ class LatticeSiever:
             bottom_layer (Neuron): The final output neuron (see GNFSiever) that receives output from the sieve.
             net (Net): The net that this sieve is associated with.
         """
-        assert I%2==0, "I must be even!"
+        assert I%2==0, "I must be even!" 
+        self.b_0 = b_0
+        self.b_1 = b_1
         self.B = B
         self.I = I
         self.J = J

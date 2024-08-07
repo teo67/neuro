@@ -70,7 +70,7 @@ def primesupto(n: int) -> np.ndarray:
     Returns:
         np.ndarray: The output array.
     """
-    return np.concatenate(([2], primesfrom3to(n)))
+    return np.concatenate(([2], primesfrom3to(n)), dtype=int)
 
 def pi(x: int) -> int:
     """Find pi(x), or the number of primes up to and including x.
@@ -113,3 +113,16 @@ def mod_inv(A: np.ndarray, M: np.ndarray) -> np.ndarray:
         M[running], A[running] = Ar % Mr, Mr
         x[running], y[running] = y[running], x[running] - q[running] * y[running]
     return np.where(x < 0, x + m0, x)
+
+def legendre(a: int, p: int) -> int:
+    """Compute the Legendre symbol (a|p).
+
+    Args:
+        a (int): The input integer.
+        p (int): The odd prime.
+
+    Returns:
+        int: (a|p).
+    """
+    assert p > 2, f'Can only calculate legendre symbol for p > 2, not p = {p}!'
+    return pow(a, (p - 1)//2, p)
