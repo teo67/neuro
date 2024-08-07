@@ -1,5 +1,6 @@
 import numpy as np
 from typing import Any
+import utils
 
 class Neuron:
     voltage: np.ndarray
@@ -43,3 +44,26 @@ class Neuron:
         return self.voltage.dtype
     def add_synapse_input(self, amount: np.ndarray):
         self.incoming_synapse_amount += amount
+    def __check_update_property(self, incoming: Any, old_value: np.ndarray, name: str) -> np.ndarray:
+        array_incoming = utils.get_np_array(incoming, np.shape(old_value), old_value.dtype)
+        utils.check_update_property(array_incoming, old_value, f'neuron.{name}')
+        return array_incoming
+    def set_voltage(self, voltage: Any):
+        self.voltage = self.__check_update_property(voltage, self.voltage, 'voltage')
+    def set_leak_amount(self, leak_amount: Any):
+        self.leak_amount = self.__check_update_property(leak_amount, self.leak_amount, 'leak amount')
+    def set_threshold(self, threshold: Any):
+        self.threshold = self.__check_update_property(threshold, self.threshold, 'threshold')
+    def set_resets_after_fire(self, resets_after_fire: Any):
+        self.resets_after_fire = self.__check_update_property(resets_after_fire, self.resets_after_fire, 'resets after fire')
+    def __str__(self):
+        return f'Neuron[voltage={self.voltage}, threshold={self.threshold}, leak={self.leak_amount}, reset={self.resets_after_fire}]'
+def make_neuron(
+        shape: tuple[int], voltage: Any, leak_amount: Any, threshold: Any, resets_after_fire: Any = True, dtype: Any = int
+) -> Neuron:
+    return Neuron(
+        voltage=utils.get_np_array(voltage, shape, dtype),
+        leak_amount=utils.get_np_array(leak_amount, shape, dtype),
+        threshold=utils.get_np_array(threshold, shape, dtype),
+        resets_after_fire=utils.get_np_array(resets_after_fire, shape, bool)
+    )

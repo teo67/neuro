@@ -1,6 +1,7 @@
-from neuron import Neuron
-from synapse import Synapse
+from net.neuron import Neuron, make_neuron
+from net.synapse import Synapse, make_synapse
 import numpy as np
+from typing import Any
 
 class Net:
     neurons: list[Neuron]
@@ -10,10 +11,12 @@ class Net:
         self.neurons = []
         self.synapses = []
         self.output_neuron = None
-    def register_neuron(self, neuron: Neuron):
+    def register_neuron(self, neuron: Neuron) -> Neuron:
         self.neurons.append(neuron)
-    def register_synapse(self, synapse: Synapse):
+        return neuron
+    def register_synapse(self, synapse: Synapse) -> Synapse:
         self.synapses.append(synapse)
+        return synapse
     def set_output_neuron(self, output_neuron: Neuron):
         self.output_neuron = output_neuron
     def __run_single_step(self):
@@ -21,9 +24,10 @@ class Net:
             synapse.update()
         for neuron in self.neurons:
             neuron.run_step()
-    def run_steps(self, num_steps: int) -> list[np.ndarray] | None:
-        for neuron in self.neurons:
-            neuron.reset_output()
+    def run_steps(self, num_steps: int, carryover_output: bool = False) -> list[np.ndarray] | None:
+        if not carryover_output:
+            for neuron in self.neurons:
+                neuron.reset_output()
         recorded_output = []
         for _ in range(num_steps):
             self.__run_single_step()
