@@ -3,7 +3,18 @@ import numpy as np
 import utils
 import primefac
 
-def check_results(siever: GNFSiever, results: list[tuple[int, int, tuple[int, int], tuple[int, int], np.ndarray]]) -> set[tuple[int, int]]:
+def check_results(siever: GNFSiever, results: list[tuple[int, int, tuple[int, int], tuple[int, int], np.ndarray]]) -> set[tuple[int, int]] | None:
+    """Iterate through results from a GNFSiever, validating them and printing information about them.
+    Raises an exception if an invalid value was found (i.e. invalid u or v vector, invalid norm, a & b not coprime except q).
+    Halts early and returns None if an outlier is found, i.e. an (a, b) pair that has no factors in one of the two prime bases.
+
+    Args:
+        siever (GNFSiever): The siever that generated the results.
+        results (list[tuple[int, int, tuple[int, int], tuple[int, int], np.ndarray]]): The results (see GNFSiever.sieve).
+
+    Returns:
+        set[tuple[int, int]]: The set of (a, b) pairs from the results that are smooth in both domains and coprime.
+    """
     smooth_ab = set()
     for q, s, (u_1, u_2), (v_1, v_2), spike_times in results:
         for t in spike_times:
@@ -18,7 +29,7 @@ def check_results(siever: GNFSiever, results: list[tuple[int, int, tuple[int, in
             assert initial_norm % q == 0, f'norm {initial_norm} was not divisible by special q {q}!'
             ab_gcd = abs(utils.gcd(a, b))
             without_q = False
-            if ab_gcd == q:
+            if ab_gcd == q: # this is a special case descibed in the Lattice Sieve paper
                 a //= q
                 b //= q
                 ab_gcd = 1

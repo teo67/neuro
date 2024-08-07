@@ -17,6 +17,20 @@ class PrimeIdealSiever(LatticeSiever):
     def __init__(
         self, b_0: int, b_1: int, B: float, I: int, J: int, top_layer: Neuron, bottom_layer: Neuron, net: Net, coefficients: Iterable[int], B6: float
     ):
+        """Create a prime ideal siever that fires when a(i, j) === rb(i, j) (mod p) and hook it up to the net.
+
+        Args:
+            b_0 (int): The lower bound (inclusive) for primes used in this sieve.
+            b_1 (int): The upper bound (inclusive) for primes used in this sieve.
+            B (float): The amount of lenience (increasing will cause this sieve to fire more).
+            I (int): The (even) bound for the i coordinate (i <- [-I/2, I/2)).
+            J (int): The bound for the j coordinate (j <- (0, J)).
+            top_layer (Neuron): The row clock neuron (see GNFSiever) that provides input to the sieve.
+            bottom_layer (Neuron): The final output neuron (see GNFSiever) that receives output from the sieve.
+            net (Net): The net that this sieve is associated with.
+            coefficients (Iterable[int]): The list of integer coefficients of the polynomial (index 0 = trailing coefficient, ...).
+            B6 (float): The B6 value for this sieve (the constant smoothness threshold).
+        """
         self.coefficients = coefficients
         self.d = len(coefficients) - 1
         self.sympy_poly = 0
@@ -30,6 +44,14 @@ class PrimeIdealSiever(LatticeSiever):
         return [(r, p) for p in all_primes for r in self.find_roots(p) if p >= b_0]
 
     def find_roots(self, prime: int) -> Iterable[int]:
+        """Find all roots of the polynomial associated with this sieve, mod a given prime.
+
+        Args:
+            prime (int): The prime p for which f(r) === 0, mod p.
+
+        Returns:
+            Iterable[int]: An iterable of integer roots, mod p.
+        """
         factors = polytools.factor_list(polytools.factor(self.sympy_poly, modulus=prime))[1]
         factor_nums = []
         for factor_p, one in factors:
@@ -41,6 +63,14 @@ class PrimeIdealSiever(LatticeSiever):
         return factor_nums
 
     def polynomial_f(self, x: float) -> float:
+        """Get f(x), or the output of the polynomial associated with this sieve.
+
+        Args:
+            x (float): The input to the polynomial.
+
+        Returns:
+            float: The output of the polynomial.
+        """
         return sum([coeff * (x**n) for n, coeff in enumerate(self.coefficients)])
 
     def get_norm(self, a: int, b: int) -> int:

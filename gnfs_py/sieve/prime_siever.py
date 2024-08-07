@@ -11,6 +11,19 @@ class PrimeSiever(LatticeSiever):
     def __init__(
         self, b_0: int, b_1: int, B: float, I: int, J: int, top_layer: Neuron, bottom_layer: Neuron, net: Net, m: int
     ):
+        """Create a prime siever that fires when a(i, j) === mb(i, j) (mod p) and hook it up to the net.
+
+        Args:
+            b_0 (int): The lower bound (inclusive) for primes used in this sieve.
+            b_1 (int): The upper bound (inclusive) for primes used in this sieve.
+            B (float): The amount of lenience (increasing will cause this sieve to fire more).
+            I (int): The (even) bound for the i coordinate (i <- [-I/2, I/2)).
+            J (int): The bound for the j coordinate (j <- (0, J)).
+            top_layer (Neuron): The row clock neuron (see GNFSiever) that provides input to the sieve.
+            bottom_layer (Neuron): The final output neuron (see GNFSiever) that receives output from the sieve.
+            net (Net): The net that this sieve is associated with.
+            m (int): The m value for this prime sieve.
+        """
         self.m = m
         super().__init__(b_0, b_1, B, I, J, top_layer, bottom_layer, net)
 
