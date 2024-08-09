@@ -232,6 +232,8 @@ class PostProcessor:
                 legend = utils.legendre(a + b * s, q)
                 if legend != 1:
                     mat[j + len(self.ordered_prime_factors) + len(self.ordered_prime_ideal_factors)][i] = 1
+            if a - b * self.siever.prime_siever.m < 0:
+                mat[-1][i] = 1
         self.matrix = mat
         return mat
     
@@ -250,24 +252,24 @@ class PostProcessor:
             return None
         mod_poly = self.siever.prime_ideal_siever.sympy_poly
         for solution in self.solutions:
-            print(solution)
-            hits = self.matrix @ np.array(solution) // 2
             building_poly = 1
-            for i in range(len(self.ordered_prime_ideal_factors)):
-                for _ in hits[i]:
-                    building_poly = polytools.rem(building_poly * (a - b * var_x), mod_poly, modulus=n)
-                    building_poly = polytools.trunc(building_poly, n)
-            break
-            # building_poly = 1
-            # indices = np.where(solution)[0]
-            # print(indices)
-            # y = 1
-            # for i in indices:
-            #     a, b = self.ordered_ab_pairs[i]
-            #     building_poly = polytools.rem(building_poly * (a - b * var_x), mod_poly, modulus=n)
-            #     building_poly = polytools.trunc(building_poly, n)
-            #     y *= (a - b * self.siever.prime_siever.m)
-            #     y %= n
+            indices = np.where(solution)[0]
+            print(indices)
+            y = 1
+            for i in indices:
+                a, b = self.ordered_ab_pairs[i]
+                building_poly = polytools.rem(building_poly * (a - b * var_x), mod_poly)
+                # y *= (a - b * self.siever.prime_siever.m)
+                # y %= n
+            building_poly = Poly(polytools.rem(building_poly * diff(mod_poly, var_x), mod_poly), var_x)
+            print(building_poly)
+
+            # building_poly = Poly(22455983949710645412 *var_x**2 + 54100105785512562427 *var_x + 22939402657683071224, var_x)
+
+            sqrt_building = utils.poly_sqrt(building_poly, mod_poly, self.siever.prime_ideal_siever.p, debug=True)
+            print(sqrt_building)
+            if sqrt_building is not None:
+                return
             # y *= (diff(mod_poly).subs({var_x: self.siever.prime_siever.m}))
             # y %= n
             # print(building_poly)

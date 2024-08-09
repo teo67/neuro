@@ -10,6 +10,7 @@ from sympy.polys import polytools
 # from net.neuron import Neuron, make_neuron
 # from net.net import Net
 # from net.synapse import Synapse, make_synapse
+
 def main():
     n = 45113
     prime_upper_bound = 29 # B_0 in Lattice Sieve paper
@@ -20,6 +21,11 @@ def main():
         b_0_primes=1, b_1_primes=prime_upper_bound, B_primes=np.log(large_prime_upper_bound), # so as to allow up to one large prime
         b_0_ideals=1, b_1_ideals=ideals_upper_bound, B_ideals=np.log(large_prime_upper_bound), B6=10,
         I=20, J=10)
+    
+    # my_poly = Poly(58251363820606365*var_x**2+149816899035790332*var_x+75158930297695972, var_x)
+    
+    # print(utils.poly_sqrt(my_poly, Poly(siever.prime_ideal_siever.sympy_poly), siever.prime_ideal_siever.p))
+    # return
     
     results = siever.sieve(prime_upper_bound, ideals_upper_bound, debug=False, verbose=False)
     post_processor = PostProcessor(siever, results)
@@ -68,8 +74,7 @@ def main():
     print(chars)
     print()
     matrix = post_processor.get_matrix()
-    for row in matrix:
-        print(row)
+    print(matrix)
     solutions = post_processor.solve_matrix()
     print(solutions)
     post_processor.solve_problem(n)

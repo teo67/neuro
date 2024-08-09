@@ -1,5 +1,5 @@
 from sieve.lattice_siever import LatticeSiever
-from sympy import poly
+from sympy import poly, Poly
 from sympy.abc import x as var_x
 from sympy.polys import polytools
 import utils
@@ -11,7 +11,7 @@ from typing import Any
 class PrimeIdealSiever(LatticeSiever):
     coefficients: Iterable[int]
     d: int
-    sympy_poly: Any
+    sympy_poly: Poly
     B6: float
 
     def __init__(
@@ -37,6 +37,7 @@ class PrimeIdealSiever(LatticeSiever):
         self.B6 = B6
         for i, coeff in enumerate(self.coefficients):
             self.sympy_poly += (coeff * var_x ** i)
+        self.sympy_poly = Poly(self.sympy_poly, var_x)
         super().__init__(b_0, b_1, B, I, J, top_layer, bottom_layer, net)
 
     def get_rp_pairs(self, b_0: int, b_1: int) -> Iterable[tuple[int, int]]:
